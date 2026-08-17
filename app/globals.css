@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f7f8fc;
+  --surface: #ffffff;
+  --surface-alt: #f3f4f6;
+  --surface-strong: #eef2ff;
+  --primary-text: #111827;
+  --secondary-text: #64748b;
+  --border: rgba(148, 163, 184, 0.28);
+  --accent: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.1);
+  --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 32%), var(--background);
+  color: var(--primary-text);
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(79, 70, 229, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-heading {
+    @apply text-2xl font-semibold tracking-[-0.04em] text-[color:var(--primary-text)] sm:text-3xl;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.2em] text-[color:var(--secondary-text)];
+  }
+
+  .card-surface {
+    @apply rounded-2xl border bg-[color:var(--surface)] shadow-[var(--shadow-soft)] border-[color:var(--border)];
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-alt)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--secondary-text)];
+  }
+}
