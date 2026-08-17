@@ -26,7 +26,8 @@ export type AmbientItem = {
     | 'claude'
     | 'react'
     | 'flutter'
-    | 'node';
+    | 'node'
+    | 'linkedin';
 };
 
 export const ambientSections = {
@@ -91,8 +92,8 @@ export const ambientSections = {
     { label: 'API', x: '78%', y: '74%', size: 150, opacity: 0.7, kind: 'panel', lines: ['doc // review', 'status: clear', 'updated'], tone: 'accent' },
   ],
   contact: [
-    { label: 'GitHub', x: '18%', y: '34%', size: 42, opacity: 0.64, kind: 'logo', tone: 'brand' },
-    { label: 'code', x: '80%', y: '34%', size: 52, opacity: 0.7, kind: 'glyph', tone: 'accent' },
+    { label: 'GitHub', x: '18%', y: '34%', size: 42, opacity: 0.64, kind: 'logo', tone: 'brand', float: 'github' },
+    { label: 'LinkedIn', x: '80%', y: '34%', size: 42, opacity: 0.64, kind: 'logo', tone: 'brand', float: 'linkedin' },
     { label: 'terminal', x: '52%', y: '66%', size: 150, opacity: 0.7, kind: 'panel', lines: ['cursor: ready', 'status: open', 'hello@domain'], tone: 'neutral' },
   ],
 } as const;

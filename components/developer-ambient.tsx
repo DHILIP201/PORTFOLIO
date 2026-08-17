@@ -25,12 +25,12 @@ function getDisplayText(label: string) {
   const cleaned = label.trim();
 
   if (cleaned === 'Node.js') return 'Node';
-  if (cleaned === 'LinkedIn') return 'in';
   if (cleaned === 'LeetCode') return 'LC';
   if (cleaned === 'ChatGPT') return 'ChatGPT';
   if (cleaned === 'Gemini') return 'Gemini';
   if (cleaned === 'Claude') return 'Claude';
   if (cleaned === 'GitHub') return 'GitHub';
+  if (cleaned === 'LinkedIn') return 'in';
   if (cleaned === 'Vercel') return 'Vercel';
   if (cleaned === 'Render') return 'Render';
   if (cleaned === 'Netlify') return 'Netlify';
@@ -79,6 +79,12 @@ function renderBrandLogo(label: string) {
           <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" />
           <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" transform="rotate(60 12 12)" />
           <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" transform="rotate(-60 12 12)" />
+        </svg>
+      );
+    case 'LinkedIn':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] fill-current text-white sm:h-[20px] sm:w-[20px]">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.731-2.004 1.439-.103.25-.129.599-.129.948v5.418h-3.554s.05-8.736 0-9.646h3.554v1.364c.429-.66 1.191-1.599 2.905-1.599 2.121 0 3.71 1.386 3.71 4.365v5.516zM5.337 9.433c-1.144 0-1.915-.758-1.915-1.704 0-.951.768-1.704 1.959-1.704 1.188 0 1.914.753 1.939 1.704 0 .946-.751 1.704-1.983 1.704zm1.581 10.019H3.656V9.807h3.262v9.645zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
         </svg>
       );
     default:
@@ -133,6 +139,8 @@ function getFloatAnimation(type?: AmbientItem['float']) {
       return 'ambientFloatFlutter';
     case 'node':
       return 'ambientFloatNode';
+    case 'linkedin':
+      return 'ambientFloatLinkedIn';
     default:
       return undefined;
   }
@@ -267,6 +275,11 @@ export function DeveloperAmbientLayer({ items, className = '', floating = false 
           0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
           50% { transform: translate(-50%, -50%) translate3d(0, -10px, 0) rotate(0.8deg); }
           100% { transform: translate(-50%, -50%) translate3d(0, 12px, 0) rotate(-0.8deg); }
+        }
+        @keyframes ambientFloatLinkedIn {
+          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
+          50% { transform: translate(-50%, -50%) translate3d(0, -8px, 0) rotate(0.6deg); }
+          100% { transform: translate(-50%, -50%) translate3d(0, 10px, 0) rotate(-0.6deg); }
         }
         @media (prefers-reduced-motion: reduce) {
           [data-ambient-float='true'] {
