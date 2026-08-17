@@ -39,18 +39,22 @@ export function ContactSection() {
               <MapPin size={18} />
               <span>{siteConfig.location}</span>
             </div>
-            <div className="flex items-center justify-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-700">
-              <a href={siteConfig.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="flex items-center gap-1.5 transition hover:text-slate-900">
-                <GitHubIcon />
-                <span className="text-sm">GitHub</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-700 sm:gap-4 sm:p-5">
+              <a href={siteConfig.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="flex items-center gap-1 transition hover:text-slate-900 sm:gap-1.5">
+                <div className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5">
+                  <GitHubIcon />
+                </div>
+                <span className="whitespace-nowrap text-xs font-medium sm:text-sm">GitHub</span>
               </a>
-              <div className="h-4 w-px bg-slate-300" />
-              <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="flex items-center gap-1.5 transition hover:text-slate-900">
-                <LinkedInIcon />
-                <span className="text-sm">LinkedIn</span>
+              <div className="h-3 w-px bg-slate-300" />
+              <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="flex items-center gap-1 transition hover:text-slate-900 sm:gap-1.5">
+                <div className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5">
+                  <LinkedInIcon />
+                </div>
+                <span className="whitespace-nowrap text-xs font-medium sm:text-sm">LinkedIn</span>
               </a>
-              <div className="h-4 w-px bg-slate-300" />
-              <a href={siteConfig.resumeUrl} aria-label="Résumé" className="text-sm transition hover:text-slate-900">Résumé</a>
+              <div className="h-3 w-px bg-slate-300" />
+              <a href={siteConfig.resumeUrl} aria-label="Résumé" className="whitespace-nowrap text-xs font-medium transition hover:text-slate-900 sm:text-sm">Résumé</a>
             </div>
           </div>
         </div>

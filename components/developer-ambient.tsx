@@ -149,11 +149,11 @@ function getFloatAnimation(type?: AmbientItem['float']) {
 function getFloatDuration(type?: AmbientItem['float']) {
   switch (type) {
     case 'github':
-      return 16;
+      return 9;
     case 'leetcode':
-      return 15;
+      return 11;
     case 'vercel':
-      return 18;
+      return 12;
     case 'render':
       return 13;
     case 'netlify':
@@ -171,9 +171,9 @@ function getFloatDuration(type?: AmbientItem['float']) {
     case 'node':
       return 15;
     case 'terminal':
-      return 15;
+      return 13;
     case 'api':
-      return 17;
+      return 14;
     case 'database':
       return 16;
     case 'git':
@@ -193,8 +193,8 @@ export function DeveloperAmbientLayer({ items, className = '', floating = false 
       <style jsx>{`
         @keyframes ambientFloatTerminal {
           0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(12px, -10px, 0) rotate(1deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-10px, 10px, 0) rotate(-1deg); }
+          50% { transform: translate(-50%, -50%) translate3d(16px, -18px, 0) rotate(1.5deg); }
+          100% { transform: translate(-50%, -50%) translate3d(-14px, 16px, 0) rotate(-1.5deg); }
         }
         @keyframes ambientFloatApi {
           0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
