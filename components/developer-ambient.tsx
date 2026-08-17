@@ -52,6 +52,51 @@ function getDisplayText(label: string) {
   return cleaned.length > 10 ? cleaned.slice(0, 9).toUpperCase() : cleaned.toUpperCase();
 }
 
+function renderBrandLogo(label: string) {
+  switch (label) {
+    case 'GitHub':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] fill-current text-white sm:h-[20px] sm:w-[20px]">
+          <path d="M12 .5C5.65.5.5 5.65.5 12.08c0 5.14 3.34 9.48 7.97 11.02.58.11.79-.25.79-.56v-2.05c-3.25.71-3.93-1.56-3.93-1.56-.53-1.35-1.3-1.71-1.3-1.71-1.06-.73.08-.72.08-.72 1.18.08 1.8 1.22 1.8 1.22 1.04 1.78 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.59-.29-5.31-1.3-5.31-5.77 0-1.27.45-2.31 1.2-3.12-.12-.29-.52-1.46.11-3.04 0 0 .98-.31 3.2 1.19a11.1 11.1 0 0 1 5.84 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.58.23 2.75.11 3.04.75.81 1.2 1.85 1.2 3.12 0 4.48-2.73 5.47-5.33 5.76.42.37.8 1.09.8 2.2v3.26c0 .31.2.68.8.56A12.08 12.08 0 0 0 23.5 12.08C23.5 5.65 18.35.5 12 .5Z" />
+        </svg>
+      );
+    case 'LeetCode':
+      return (
+        <svg viewBox="0 0 32 32" aria-hidden="true" className="h-[18px] w-[18px] fill-current text-white sm:h-[20px] sm:w-[20px]">
+          <path d="M14.3 3.8a2.4 2.4 0 0 1 3.4 0l8.5 8.5a2.4 2.4 0 0 1 0 3.4l-8.5 8.5a2.4 2.4 0 0 1-3.4 0l-1.8-1.8a2.4 2.4 0 0 1 0-3.4l2.1-2.1-1.5-1.5-3.7 3.7c-.94.94-2.46.94-3.4 0l-1.5-1.5a2.4 2.4 0 0 1 0-3.4L8.5 11l1.5-1.5 3.7 3.7 1.5-1.5-3.7-3.7a2.4 2.4 0 0 1 0-3.4l1.5-1.5a2.4 2.4 0 0 1 3.4 0l4.2 4.2 1.8-1.8Z" />
+        </svg>
+      );
+    case 'Vercel':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] fill-current text-white sm:h-[20px] sm:w-[20px]">
+          <path d="M12 2 2.5 19h19L12 2Z" />
+        </svg>
+      );
+    case 'React':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] fill-none text-white sm:h-[20px] sm:w-[20px]">
+          <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+          <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" />
+          <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" transform="rotate(60 12 12)" />
+          <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" transform="rotate(-60 12 12)" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+function renderLogoOrFallback(label: string) {
+  const logo = renderBrandLogo(label);
+  if (logo) return logo;
+
+  return (
+    <span className="select-none text-[9px] font-medium uppercase tracking-[0.12em] text-white sm:text-[10px]">
+      {getDisplayText(label)}
+    </span>
+  );
+}
+
 function getFloatAnimation(type?: AmbientItem['float']) {
   switch (type) {
     case 'terminal':
@@ -257,7 +302,7 @@ export function DeveloperAmbientLayer({ items, className = '', floating = false 
             >
               {isPanel ? (
                 <div
-                  className={`flex h-full w-full flex-col justify-center rounded-[1.25rem] border px-2.5 py-2 shadow-[0_18px_38px_rgba(15,23,42,0.08)] ${getToneStyles(item.tone)}`}
+                  className="flex h-full w-full flex-col justify-center rounded-[1.15rem] border border-slate-200 bg-white px-2 py-2 text-slate-900 shadow-[0_16px_32px_rgba(15,23,42,0.08)]"
                 >
                   <div className="mb-1 flex items-center justify-between text-[7px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                     <span>{item.label}</span>
@@ -272,22 +317,13 @@ export function DeveloperAmbientLayer({ items, className = '', floating = false 
               ) : (
                 <div
                   className={[
-                    'flex h-full w-full items-center justify-center overflow-hidden rounded-full border shadow-[0_18px_38px_rgba(15,23,42,0.14)] backdrop-blur-[1px]',
-                    isGlyph ? 'bg-[#0f172a]/90 text-slate-100' : getToneStyles(item.tone),
-                    'border-white/10',
+                    'flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#020817] text-white shadow-[0_12px_26px_rgba(2,6,23,0.22)] backdrop-blur-[1px]',
                   ].join(' ')}
+                  aria-hidden="true"
                 >
-                  <span
-                    className={[
-                      'select-none text-center font-semibold tracking-[0.08em]',
-                      isGlyph ? 'text-[8px] uppercase' : 'text-[9px] sm:text-[10px]',
-                    ].join(' ')}
-                    style={{
-                      letterSpacing: isLogo ? '0.06em' : '0.12em',
-                    }}
-                  >
-                    {getDisplayText(item.label)}
-                  </span>
+                  <div className="flex h-full w-full items-center justify-center text-white">
+                    {renderLogoOrFallback(item.label)}
+                  </div>
                 </div>
               )}
             </div>
