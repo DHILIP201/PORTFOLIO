@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import type { AmbientItem } from '@/content/ambient';
 
@@ -10,16 +10,7 @@ type DeveloperAmbientProps = {
   floating?: boolean;
 };
 
-type AnimatedState = {
-  id: string;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-};
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 
 function parsePercent(value: string | number, total: number) {
   const raw = typeof value === 'number' ? value : Number.parseFloat(value);
@@ -29,35 +20,18 @@ function parsePercent(value: string | number, total: number) {
 
 function getDisplayText(label: string) {
   const cleaned = label.trim();
-
-  if (cleaned === 'Node.js') return 'Node';
-  if (cleaned === 'LeetCode') return 'LC';
-  if (cleaned === 'ChatGPT') return 'GPT';
-  if (cleaned === 'Gemini') return 'G';
-  if (cleaned === 'Claude') return 'C';
-  if (cleaned === 'GitHub') return 'GitHub';
-  if (cleaned === 'LinkedIn') return 'in';
-  if (cleaned === 'Vercel') return 'Vercel';
-  if (cleaned === 'Render') return 'Render';
-  if (cleaned === 'Netlify') return 'Netlify';
-  if (cleaned === 'React') return 'React';
-  if (cleaned === 'Flutter') return 'Flutter';
-  if (cleaned === 'TypeScript') return 'TS';
-  if (cleaned === 'JavaScript') return 'JS';
-  if (cleaned === 'Python') return 'Py';
-  if (cleaned === 'MongoDB') return 'Mongo';
-  if (cleaned === 'Git') return 'Git';
-  if (cleaned === 'database') return 'DATABASE';
-  if (cleaned === 'terminal') return 'terminal';
-  if (cleaned === 'API') return 'API';
-  if (cleaned === 'deploy') return 'deploy';
-  if (cleaned === 'code') return '{}';
-  if (cleaned === 'commit') return 'commit';
-
-  return cleaned.length > 10 ? cleaned.slice(0, 8).toUpperCase() : cleaned.toUpperCase();
+  const m: Record<string, string> = {
+    'Node.js': 'Node', 'LeetCode': 'LC', 'ChatGPT': 'GPT', 'Gemini': 'G', 'Claude': 'C',
+    'GitHub': 'GitHub', 'LinkedIn': 'in', 'Vercel': 'Vercel', 'Render': 'Render',
+    'Netlify': 'Netlify', 'React': 'React', 'Flutter': 'Flutter', 'TypeScript': 'TS',
+    'JavaScript': 'JS', 'Python': 'Py', 'MongoDB': 'Mongo', 'Git': 'Git',
+    'database': 'DATABASE', 'terminal': 'terminal', 'API': 'API', 'deploy': 'deploy',
+    'code': '{}', 'commit': 'commit',
+  };
+  return m[cleaned] ?? (cleaned.length > 10 ? cleaned.slice(0, 8).toUpperCase() : cleaned.toUpperCase());
 }
 
-function renderBrandLogo(label: string) {
+function renderBrandLogo(label: string): React.ReactNode | null {
   switch (label) {
     case 'GitHub':
       return (
@@ -92,27 +66,19 @@ function renderBrandLogo(label: string) {
           <ellipse cx="12" cy="12" rx="8.2" ry="3.8" stroke="currentColor" strokeWidth="1.7" transform="rotate(-60 12 12)" />
         </svg>
       );
-    case 'Flutter':
-      return <span className="text-[9px] font-bold tracking-[-0.08em] text-white sm:text-[10px]">F</span>;
-    case 'ChatGPT':
-      return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">GPT</span>;
-    case 'Gemini':
-      return <span className="text-[9px] font-black tracking-[-0.06em] text-white sm:text-[10px]">G</span>;
-    case 'Claude':
-      return <span className="text-[9px] font-black tracking-[-0.06em] text-white sm:text-[10px]">C</span>;
-    case 'Render':
-      return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">R</span>;
-    case 'Netlify':
-      return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">N</span>;
-    default:
-      return null;
+    case 'Flutter': return <span className="text-[9px] font-bold tracking-[-0.08em] text-white sm:text-[10px]">F</span>;
+    case 'ChatGPT': return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">GPT</span>;
+    case 'Gemini':  return <span className="text-[9px] font-black tracking-[-0.06em] text-white sm:text-[10px]">G</span>;
+    case 'Claude':  return <span className="text-[9px] font-black tracking-[-0.06em] text-white sm:text-[10px]">C</span>;
+    case 'Render':  return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">R</span>;
+    case 'Netlify': return <span className="text-[8px] font-black tracking-[-0.06em] text-white sm:text-[9px]">N</span>;
+    default: return null;
   }
 }
 
 function renderLogoOrFallback(label: string) {
   const logo = renderBrandLogo(label);
   if (logo) return logo;
-
   return (
     <span className="select-none text-[8px] font-medium uppercase tracking-[0.12em] text-white sm:text-[9px]">
       {getDisplayText(label)}
@@ -120,65 +86,73 @@ function renderLogoOrFallback(label: string) {
   );
 }
 
-function getRadius(item: AmbientItem) {
+function getHalfDims(item: AmbientItem) {
   if (item.kind === 'panel') {
-    const width = item.width ?? item.size ?? 160;
-    const height = item.height ?? item.size ?? 88;
-    return Math.max(width, height) * 0.42;
+    const w = item.width  ?? (item.size ? item.size * 1.5 : 150);
+    const h = item.height ?? (item.size ? item.size * 0.8 : 100);
+    return { hw: w / 2, hh: h / 2 };
   }
-
-  return (item.size ?? 52) / 2 + 12;
+  const r = (item.size ?? 52) / 2;
+  return { hw: r, hh: r };
 }
+
+// px/s — target ranges: circles 60–90, panels 45–75
+const SPEED_CIRCLE_MIN = 60;
+const SPEED_CIRCLE_MAX = 90;
+const SPEED_PANEL_MIN  = 45;
+const SPEED_PANEL_MAX  = 75;
 
 export function DeveloperAmbientLayer({ items, className = '', floating = true }: DeveloperAmbientProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [positions, setPositions] = useState<AnimatedState[]>([]);
+
+  // Mutable physics state — lives in a ref, never triggers React re-renders
+  const bodiesRef = useRef<Array<{
+    x: number; y: number; vx: number; vy: number;
+    hw: number; hh: number; el: HTMLDivElement | null;
+  }>>([]);
+
+  const elRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (!floating) {
-      setPositions(items.map((item, index) => ({
-        id: `${item.label}-${index}`,
-        x: parsePercent(item.x, 0),
-        y: parsePercent(item.y, 0),
-        vx: 0,
-        vy: 0,
-        radius: getRadius(item),
-      })));
-      return;
-    }
-
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || !floating) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      setPositions(items.map((item, index) => ({
-        id: `${item.label}-${index}`,
-        x: parsePercent(item.x, container.clientWidth),
-        y: parsePercent(item.y, container.clientHeight),
-        vx: 0,
-        vy: 0,
-        radius: getRadius(item),
-      })));
-      return;
-    }
+    if (reduced) return;
 
-    const width = container.clientWidth || 1;
-    const height = container.clientHeight || 1;
-    const state: AnimatedState[] = items.map((item, index) => {
-      const radius = getRadius(item);
-      const offsetX = parsePercent(item.x, width);
-      const offsetY = parsePercent(item.y, height);
-      const baseSpeed = 32 + (index % 4) * 8 + (radius > 90 ? 10 : 0);
-      const direction = index % 2 === 0 ? 1 : -1;
+    const W = container.clientWidth  || 800;
+    const H = container.clientHeight || 600;
+
+    // Build physics bodies — done once on mount
+    bodiesRef.current = items.map((item, i) => {
+      const { hw, hh } = getHalfDims(item);
+
+      // Spread starting positions across the full container so objects
+      // begin in different regions and immediately travel through open space
+      const spreadX = hw + 8 + ((i * 0.618) % 1) * (W - hw * 2 - 16);
+      const spreadY = hh + 8 + ((i * 0.381) % 1) * (H - hh * 2 - 16);
+      // Prefer the content-declared position but fall back to spread if it
+      // collapses near a wall (parsed percent often returns ~0 on first render)
+      const declaredX = parsePercent(item.x, W);
+      const declaredY = parsePercent(item.y, H);
+      const x = clamp(declaredX > 0 ? declaredX : spreadX, hw + 8, W - hw - 8);
+      const y = clamp(declaredY > 0 ? declaredY : spreadY, hh + 8, H - hh - 8);
+
+      // Golden-angle direction spread — each object starts heading a different way
+      const angle = i * 2.399 + (i % 3) * 0.8;
+      // Interpolate speed within the target range using the object index
+      const t = items.length > 1 ? i / (items.length - 1) : 0.5;
+      const isPanel = item.kind === 'panel';
+      const speed = isPanel
+        ? SPEED_PANEL_MIN  + t * (SPEED_PANEL_MAX  - SPEED_PANEL_MIN)  + (i % 3) * 5
+        : SPEED_CIRCLE_MIN + t * (SPEED_CIRCLE_MAX - SPEED_CIRCLE_MIN) + (i % 3) * 7;
 
       return {
-        id: `${item.label}-${index}`,
-        x: clamp(offsetX, radius + 10, width - radius - 10),
-        y: clamp(offsetY, radius + 10, height - radius - 10),
-        vx: ((Math.random() * 1.2 + 0.8) * baseSpeed * direction) / 60,
-        vy: ((Math.random() * 1.1 + 0.8) * baseSpeed * (index % 3 === 0 ? -1 : 1)) / 60,
-        radius,
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        hw, hh,
+        el: elRefs.current[i] ?? null,
       };
     });
 
@@ -186,102 +160,108 @@ export function DeveloperAmbientLayer({ items, className = '', floating = true }
     let lastTime = performance.now();
 
     const tick = (time: number) => {
-      const dt = Math.min((time - lastTime) / 1000, 0.032);
+      const dt = Math.min((time - lastTime) / 1000, 0.05);
       lastTime = time;
-      const next = state.map((item) => ({ ...item }));
+      const bodies = bodiesRef.current;
+      const W2 = container.clientWidth  || W;
+      const H2 = container.clientHeight || H;
 
-      for (let i = 0; i < next.length; i += 1) {
-        const current = next[i];
-        current.x += current.vx * 60 * dt;
-        current.y += current.vy * 60 * dt;
-
-        const minX = current.radius + 12;
-        const maxX = width - current.radius - 12;
-        const minY = current.radius + 12;
-        const maxY = height - current.radius - 12;
-
-        if (current.x < minX) {
-          current.x = minX;
-          current.vx = Math.abs(current.vx) * 0.96;
-        } else if (current.x > maxX) {
-          current.x = maxX;
-          current.vx = -Math.abs(current.vx) * 0.96;
-        }
-
-        if (current.y < minY) {
-          current.y = minY;
-          current.vy = Math.abs(current.vy) * 0.96;
-        } else if (current.y > maxY) {
-          current.y = maxY;
-          current.vy = -Math.abs(current.vy) * 0.96;
-        }
+      // Integrate positions + wall bounce — mutates bodiesRef in-place every frame
+      for (const b of bodies) {
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        if (b.x < b.hw + 8)           { b.x = b.hw + 8;        b.vx =  Math.abs(b.vx); }
+        else if (b.x > W2 - b.hw - 8) { b.x = W2 - b.hw - 8;  b.vx = -Math.abs(b.vx); }
+        if (b.y < b.hh + 8)           { b.y = b.hh + 8;        b.vy =  Math.abs(b.vy); }
+        else if (b.y > H2 - b.hh - 8) { b.y = H2 - b.hh - 8;  b.vy = -Math.abs(b.vy); }
       }
 
-      for (let i = 0; i < next.length; i += 1) {
-        for (let j = i + 1; j < next.length; j += 1) {
-          const a = next[i];
-          const b = next[j];
+      // Pairwise AABB collision resolution
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const a = bodies[i];
+          const b = bodies[j];
           const dx = b.x - a.x;
           const dy = b.y - a.y;
-          const distance = Math.hypot(dx, dy) || 0.0001;
-          const minDistance = a.radius + b.radius + 4;
-
-          if (distance < minDistance) {
-            const normalX = dx / distance;
-            const normalY = dy / distance;
-            const overlap = (minDistance - distance) / 2;
-
-            a.x -= normalX * overlap;
-            a.y -= normalY * overlap;
-            b.x += normalX * overlap;
-            b.y += normalY * overlap;
-
-            const relativeVelocityX = b.vx - a.vx;
-            const relativeVelocityY = b.vy - a.vy;
-            const velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
-
-            if (velocityAlongNormal < 0) {
-              const restitution = 0.9;
-              const impulse = (-(1 + restitution) * velocityAlongNormal) / 2;
-              a.vx -= impulse * normalX;
-              a.vy -= impulse * normalY;
-              b.vx += impulse * normalX;
-              b.vy += impulse * normalY;
+          const ox = a.hw + b.hw - Math.abs(dx);
+          const oy = a.hh + b.hh - Math.abs(dy);
+          if (ox > 0 && oy > 0) {
+            if (ox < oy) {
+              // Resolve overlap on X axis
+              const d = dx > 0 ? 1 : -1;
+              a.x -= d * ox / 2;
+              b.x += d * ox / 2;
+              // Full elastic swap on the collision axis — makes direction change obvious
+              const t = a.vx;
+              a.vx = b.vx;   // no damping: preserve full speed after bounce
+              b.vx = t;
+              // Small perpendicular nudge so objects don't lock on the same axis
+              a.vy += d * 2;
+              b.vy -= d * 2;
+            } else {
+              // Resolve overlap on Y axis
+              const d = dy > 0 ? 1 : -1;
+              a.y -= d * oy / 2;
+              b.y += d * oy / 2;
+              const t = a.vy;
+              a.vy = b.vy;
+              b.vy = t;
+              a.vx += d * 2;
+              b.vx -= d * 2;
             }
           }
         }
       }
 
-      setPositions(next);
+      // Write transforms directly to DOM — zero React re-render overhead
+      for (const b of bodies) {
+        if (b.el) {
+          b.el.style.transform = `translate3d(${Math.round(b.x - b.hw)}px,${Math.round(b.y - b.hh)}px,0)`;
+        }
+      }
+
       frameId = window.requestAnimationFrame(tick);
     };
 
     frameId = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frameId);
-  }, [floating, items]);
+  // items is a stable imported const — floating is the real dep
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [floating]);
 
   return (
-    <div ref={containerRef} className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${className}`} aria-hidden="true">
+    <div
+      ref={containerRef}
+      className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${className}`}
+      aria-hidden="true"
+    >
       {items.map((item, index) => {
         const isPanel = item.kind === 'panel';
         const circleSize = item.size ?? 52;
-        const panelWidth = item.width ?? (item.size ? item.size * 1.5 : 150);
-        const panelHeight = item.height ?? (item.size ? item.size * 0.8 : 100);
-        const pos = positions[index] ?? { x: parsePercent(item.x, 0), y: parsePercent(item.y, 0) };
+        const panelW = item.width  ?? (item.size ? item.size * 1.5 : 150);
+        const panelH = item.height ?? (item.size ? item.size * 0.8 : 100);
+
         const style: CSSProperties = {
-          left: '50%',
-          top: '50%',
-          width: isPanel ? panelWidth : circleSize,
-          height: isPanel ? panelHeight : circleSize,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width:   isPanel ? panelW : circleSize,
+          height:  isPanel ? panelH : circleSize,
           opacity: item.opacity ?? 0.72,
-          transform: `translate(-50%, -50%) translate3d(${pos.x}px, ${pos.y}px, 0)`,
+          // Starting position — physics loop overwrites this on first frame
+          transform: `translate3d(${parsePercent(item.x, 0)}px,${parsePercent(item.y, 0)}px,0)`,
           willChange: 'transform',
         };
 
         return (
           <div
             key={`${item.label}-${index}`}
-            className="absolute flex items-center justify-center"
+            ref={(el) => {
+              elRefs.current[index] = el;
+              // Link DOM node into live physics body if already initialised
+              if (bodiesRef.current[index]) bodiesRef.current[index].el = el;
+            }}
+            className="flex items-center justify-center"
             style={style}
           >
             {isPanel ? (
@@ -297,7 +277,10 @@ export function DeveloperAmbientLayer({ items, className = '', floating = true }
                 </div>
               </div>
             ) : (
-              <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#020817] text-white shadow-[0_12px_26px_rgba(2,6,23,0.22)] backdrop-blur-[1px]" aria-hidden="true">
+              <div
+                className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#020817] text-white shadow-[0_12px_26px_rgba(2,6,23,0.22)] backdrop-blur-[1px]"
+                aria-hidden="true"
+              >
                 <div className="flex h-full w-full items-center justify-center text-white">
                   {renderLogoOrFallback(item.label)}
                 </div>
