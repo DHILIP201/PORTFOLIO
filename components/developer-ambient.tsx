@@ -1,11 +1,41 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import type { AmbientItem } from '@/content/ambient';
 
 type DeveloperAmbientProps = {
   items: readonly AmbientItem[];
   className?: string;
   floating?: boolean;
+};
+
+type MotionProfile = {
+  duration: number;
+  x: [number, number];
+  y: [number, number];
+  rotate: [number, number];
+  delay: number;
+};
+
+const FLOAT_PROFILES: Record<NonNullable<AmbientItem['float']>, MotionProfile> = {
+  terminal: { duration: 7.2, x: [-28, 24], y: [-18, 26], rotate: [-2.8, 2.8], delay: 0.4 },
+  api: { duration: 6.3, x: [-24, 26], y: [-22, 18], rotate: [-2.6, 2.6], delay: 0.8 },
+  database: { duration: 6.9, x: [-30, 20], y: [-24, 22], rotate: [-2.4, 2.9], delay: 1.2 },
+  git: { duration: 6.8, x: [-24, 22], y: [-20, 28], rotate: [-2.8, 2.8], delay: 0.7 },
+  ai: { duration: 5.8, x: [-22, 26], y: [-26, 22], rotate: [-3.2, 3.2], delay: 0.3 },
+  code: { duration: 6.1, x: [-20, 28], y: [-18, 20], rotate: [-2.9, 3.1], delay: 1.1 },
+  github: { duration: 5.6, x: [-22, 20], y: [-26, 20], rotate: [-2.5, 2.5], delay: 0.2 },
+  leetcode: { duration: 5.9, x: [-18, 22], y: [-20, 24], rotate: [-2.4, 2.7], delay: 0.5 },
+  vercel: { duration: 6.7, x: [-24, 24], y: [-26, 22], rotate: [-2.9, 2.9], delay: 0.9 },
+  render: { duration: 6.4, x: [-22, 22], y: [-18, 26], rotate: [-2.7, 2.8], delay: 0.6 },
+  netlify: { duration: 6.1, x: [-20, 24], y: [-22, 18], rotate: [-2.4, 2.4], delay: 0.4 },
+  chatgpt: { duration: 5.4, x: [-26, 24], y: [-24, 24], rotate: [-2.9, 3.2], delay: 0.8 },
+  gemini: { duration: 5.7, x: [-20, 18], y: [-20, 28], rotate: [-2.6, 2.8], delay: 1.1 },
+  claude: { duration: 6.2, x: [-18, 22], y: [-22, 20], rotate: [-2.5, 2.9], delay: 0.9 },
+  react: { duration: 6.5, x: [-24, 28], y: [-20, 24], rotate: [-2.8, 3.1], delay: 0.5 },
+  flutter: { duration: 6.2, x: [-20, 26], y: [-18, 22], rotate: [-3.1, 3.1], delay: 0.7 },
+  node: { duration: 6.4, x: [-18, 20], y: [-24, 24], rotate: [-2.2, 2.8], delay: 1.3 },
+  linkedin: { duration: 5.5, x: [-18, 20], y: [-22, 18], rotate: [-2.2, 2.4], delay: 0.6 },
 };
 
 function getToneStyles(tone: AmbientItem['tone'] = 'neutral') {
@@ -103,220 +133,82 @@ function renderLogoOrFallback(label: string) {
   );
 }
 
-function getFloatAnimation(type?: AmbientItem['float']) {
-  switch (type) {
-    case 'terminal':
-      return 'ambientFloatTerminal';
-    case 'api':
-      return 'ambientFloatApi';
-    case 'database':
-      return 'ambientFloatDatabase';
-    case 'git':
-      return 'ambientFloatGit';
-    case 'ai':
-      return 'ambientFloatAi';
-    case 'code':
-      return 'ambientFloatCode';
-    case 'github':
-      return 'ambientFloatGithub';
-    case 'leetcode':
-      return 'ambientFloatLeetCode';
-    case 'vercel':
-      return 'ambientFloatVercel';
-    case 'render':
-      return 'ambientFloatRender';
-    case 'netlify':
-      return 'ambientFloatNetlify';
-    case 'chatgpt':
-      return 'ambientFloatChatgpt';
-    case 'gemini':
-      return 'ambientFloatGemini';
-    case 'claude':
-      return 'ambientFloatClaude';
-    case 'react':
-      return 'ambientFloatReact';
-    case 'flutter':
-      return 'ambientFloatFlutter';
-    case 'node':
-      return 'ambientFloatNode';
-    case 'linkedin':
-      return 'ambientFloatLinkedIn';
-    default:
-      return undefined;
-  }
+function getMotionProfile(item: AmbientItem): MotionProfile | undefined {
+  if (!item.float) return undefined;
+  const base = FLOAT_PROFILES[item.float];
+  if (!base) return undefined;
+
+  const sizeBoost = item.size ? (item.size >= 140 ? 0.82 : item.size >= 60 ? 0.9 : 1) : 1;
+  const subtleDepth = item.kind === 'panel' ? 1.1 : 1;
+
+  return {
+    duration: Number((base.duration * sizeBoost * subtleDepth).toFixed(1)),
+    x: [Number((base.x[0] * sizeBoost).toFixed(1)), Number((base.x[1] * sizeBoost).toFixed(1))],
+    y: [Number((base.y[0] * sizeBoost).toFixed(1)), Number((base.y[1] * sizeBoost).toFixed(1))],
+    rotate: [Number((base.rotate[0] * subtleDepth).toFixed(1)), Number((base.rotate[1] * subtleDepth).toFixed(1))],
+    delay: base.delay,
+  };
 }
 
-function getFloatDuration(type?: AmbientItem['float']) {
-  switch (type) {
-    case 'github':
-      return 9;
-    case 'leetcode':
-      return 11;
-    case 'vercel':
-      return 12;
-    case 'render':
-      return 13;
-    case 'netlify':
-      return 17;
-    case 'chatgpt':
-      return 14;
-    case 'gemini':
-      return 15;
-    case 'claude':
-      return 13;
-    case 'react':
-      return 16;
-    case 'flutter':
-      return 14;
-    case 'node':
-      return 15;
-    case 'terminal':
-      return 13;
-    case 'api':
-      return 14;
-    case 'database':
-      return 16;
-    case 'git':
-      return 14;
-    case 'ai':
-      return 18;
-    case 'code':
-      return 16;
-    default:
-      return 14;
-  }
-}
-
-export function DeveloperAmbientLayer({ items, className = '', floating = false }: DeveloperAmbientProps) {
+export function DeveloperAmbientLayer({ items, className = '', floating = true }: DeveloperAmbientProps) {
   return (
     <>
       <style jsx>{`
-        @keyframes ambientFloatTerminal {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(16px, -18px, 0) rotate(1.5deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-14px, 16px, 0) rotate(-1.5deg); }
+        @keyframes ambientDrift {
+          0% { transform: translate(-50%, -50%) translate3d(var(--ambient-x-1), var(--ambient-y-1), 0) rotate(var(--ambient-r-1)); }
+          28% { transform: translate(-50%, -50%) translate3d(var(--ambient-x-2), var(--ambient-y-2), 0) rotate(var(--ambient-r-2)); }
+          56% { transform: translate(-50%, -50%) translate3d(var(--ambient-x-3), var(--ambient-y-3), 0) rotate(var(--ambient-r-3)); }
+          100% { transform: translate(-50%, -50%) translate3d(var(--ambient-x-1), var(--ambient-y-1), 0) rotate(var(--ambient-r-1)); }
         }
-        @keyframes ambientFloatApi {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -8px, 0) rotate(0.5deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 10px, 0) rotate(-0.5deg); }
-        }
-        @keyframes ambientFloatDatabase {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(-12px, 0, 0) rotate(-1deg); }
-          100% { transform: translate(-50%, -50%) translate3d(10px, 0, 0) rotate(1deg); }
-        }
-        @keyframes ambientFloatGit {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(8px, -8px, 0) rotate(1deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-8px, 8px, 0) rotate(-1deg); }
-        }
-        @keyframes ambientFloatAi {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(10px, -8px, 0) rotate(1.5deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-8px, 10px, 0) rotate(-1.5deg); }
-        }
-        @keyframes ambientFloatCode {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -6px, 0) rotate(0.75deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 8px, 0) rotate(-0.75deg); }
-        }
-        @keyframes ambientFloatGithub {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(12px, -10px, 0) rotate(1.5deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-10px, 8px, 0) rotate(-1deg); }
-        }
-        @keyframes ambientFloatLeetCode {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -12px, 0) rotate(0.75deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 10px, 0) rotate(-0.75deg); }
-        }
-        @keyframes ambientFloatVercel {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(-10px, -8px, 0) rotate(-1deg); }
-          100% { transform: translate(-50%, -50%) translate3d(12px, 8px, 0) rotate(1deg); }
-        }
-        @keyframes ambientFloatRender {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(8px, -8px, 0) rotate(1.2deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-8px, 8px, 0) rotate(-1deg); }
-        }
-        @keyframes ambientFloatNetlify {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(-12px, 0, 0) rotate(-0.75deg); }
-          100% { transform: translate(-50%, -50%) translate3d(8px, 0, 0) rotate(0.75deg); }
-        }
-        @keyframes ambientFloatChatgpt {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(10px, -10px, 0) rotate(1.5deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-8px, 8px, 0) rotate(-1.25deg); }
-        }
-        @keyframes ambientFloatGemini {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -10px, 0) rotate(0.75deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 12px, 0) rotate(-0.75deg); }
-        }
-        @keyframes ambientFloatClaude {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(8px, -8px, 0) rotate(1.1deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-10px, 10px, 0) rotate(-1deg); }
-        }
-        @keyframes ambientFloatReact {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(-8px, 0, 0) rotate(-0.75deg); }
-          100% { transform: translate(-50%, -50%) translate3d(10px, 0, 0) rotate(0.75deg); }
-        }
-        @keyframes ambientFloatFlutter {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(10px, -8px, 0) rotate(1.25deg); }
-          100% { transform: translate(-50%, -50%) translate3d(-8px, 8px, 0) rotate(-1.25deg); }
-        }
-        @keyframes ambientFloatNode {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -10px, 0) rotate(0.8deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 12px, 0) rotate(-0.8deg); }
-        }
-        @keyframes ambientFloatLinkedIn {
-          0% { transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translate3d(0, -8px, 0) rotate(0.6deg); }
-          100% { transform: translate(-50%, -50%) translate3d(0, 10px, 0) rotate(-0.6deg); }
-        }
+
         @media (prefers-reduced-motion: reduce) {
           [data-ambient-float='true'] {
             animation: none !important;
           }
         }
       `}</style>
+
       <div className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${className}`} aria-hidden="true">
         {items.map((item) => {
-          const isLogo = item.kind === 'logo';
           const isPanel = item.kind === 'panel';
-          const isGlyph = item.kind === 'glyph';
           const circleSize = item.size ?? 52;
           const panelWidth = item.width ?? (item.size ? item.size * 1.5 : 150);
           const panelHeight = item.height ?? (item.size ? item.size * 0.8 : 100);
-          const animationName = floating ? getFloatAnimation(item.float) : undefined;
-          const animationDuration = floating ? getFloatDuration(item.float) : 14;
+          const motion = floating ? getMotionProfile(item) : undefined;
+
+          const motionStyle = motion
+            ? ({
+                ['--ambient-x-1' as string]: `${motion.x[0]}px`,
+                ['--ambient-y-1' as string]: `${motion.y[0]}px`,
+                ['--ambient-r-1' as string]: `${motion.rotate[0]}deg`,
+                ['--ambient-x-2' as string]: `${motion.x[1]}px`,
+                ['--ambient-y-2' as string]: `${motion.y[1]}px`,
+                ['--ambient-r-2' as string]: `${motion.rotate[1]}deg`,
+                ['--ambient-x-3' as string]: `${((motion.x[0] + motion.x[1]) * 0.45).toFixed(1)}px`,
+                ['--ambient-y-3' as string]: `${((motion.y[0] + motion.y[1]) * 0.48).toFixed(1)}px`,
+                ['--ambient-r-3' as string]: `${((motion.rotate[0] + motion.rotate[1]) * 0.55).toFixed(1)}deg`,
+              } as CSSProperties)
+            : undefined;
 
           return (
             <div
               key={`${item.label}-${item.x}-${item.y}`}
               className="absolute flex items-center justify-center"
-              data-ambient-float={Boolean(animationName)}
+              data-ambient-float={Boolean(motion)}
               style={{
                 left: item.x,
                 top: item.y,
                 width: isPanel ? panelWidth : circleSize,
                 height: isPanel ? panelHeight : circleSize,
                 opacity: item.opacity ?? 0.72,
-                animation: animationName ? `${animationName} ${animationDuration}s ease-in-out infinite alternate` : undefined,
+                animation: motion ? `ambientDrift ${motion.duration}s ease-in-out ${motion.delay}s infinite` : undefined,
+                transform: 'translate(-50%, -50%)',
                 willChange: 'transform',
+                ...motionStyle,
               }}
             >
               {isPanel ? (
-                <div
-                  className="flex h-full w-full flex-col justify-center rounded-[1.15rem] border border-slate-200 bg-white px-2 py-2 text-slate-900 shadow-[0_16px_32px_rgba(15,23,42,0.08)]"
-                >
+                <div className="flex h-full w-full flex-col justify-center rounded-[1.15rem] border border-slate-200 bg-white px-2 py-2 text-slate-900 shadow-[0_16px_32px_rgba(15,23,42,0.08)]">
                   <div className="mb-1 flex items-center justify-between text-[7px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                     <span>{item.label}</span>
                     <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
@@ -328,12 +220,7 @@ export function DeveloperAmbientLayer({ items, className = '', floating = false 
                   </div>
                 </div>
               ) : (
-                <div
-                  className={[
-                    'flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#020817] text-white shadow-[0_12px_26px_rgba(2,6,23,0.22)] backdrop-blur-[1px]',
-                  ].join(' ')}
-                  aria-hidden="true"
-                >
+                <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-white/10 bg-[#020817] text-white shadow-[0_12px_26px_rgba(2,6,23,0.22)] backdrop-blur-[1px]" aria-hidden="true">
                   <div className="flex h-full w-full items-center justify-center text-white">
                     {renderLogoOrFallback(item.label)}
                   </div>

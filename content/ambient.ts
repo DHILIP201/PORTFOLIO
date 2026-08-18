@@ -94,6 +94,6 @@ export const ambientSections = {
   contact: [
     { label: 'GitHub', x: '18%', y: '34%', size: 42, opacity: 0.64, kind: 'logo', tone: 'brand', float: 'github' },
     { label: 'LinkedIn', x: '80%', y: '34%', size: 42, opacity: 0.64, kind: 'logo', tone: 'brand', float: 'linkedin' },
-    { label: 'terminal', x: '52%', y: '66%', size: 150, opacity: 0.7, kind: 'panel', lines: ['cursor: ready', 'status: open', 'hello@domain'], tone: 'neutral' },
+    { label: 'terminal', x: '52%', y: '66%', size: 150, opacity: 0.7, kind: 'panel', lines: ['cursor: ready', 'status: open', 'hello@domain'], tone: 'neutral', float: 'terminal' },
   ],
 } as const;
