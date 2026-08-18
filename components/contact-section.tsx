@@ -1,4 +1,5 @@
-import { Mail, MapPin } from 'lucide-react';
+import { Download, Mail, MapPin } from 'lucide-react';
+import { GitHubIcon as GitHubBrandIcon, LinkedInIcon as LinkedInBrandIcon } from '@/components/brand-icons';
 import { siteConfig } from '@/content/site';
 import { DeveloperAmbientLayer } from '@/components/developer-ambient';
 import { ambientSections } from '@/content/ambient';
@@ -22,8 +23,8 @@ function LinkedInIcon() {
 export function ContactSection() {
   return (
     <section className="relative py-20 sm:py-24">
-      <DeveloperAmbientLayer items={ambientSections.contact} className="h-full" />
-      <div className="container-shell relative z-10">
+      <DeveloperAmbientLayer items={ambientSections.contact} />
+      <div data-ambient-safe className="container-shell relative z-10">
         <div className="card-surface p-8 sm:p-10">
           <div className="mb-6">
             <p className="eyebrow mb-3">CONTACT</p>
@@ -42,19 +43,27 @@ export function ContactSection() {
             <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-700 sm:gap-4 sm:p-5">
               <a href={siteConfig.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="flex items-center gap-1 transition hover:text-slate-900 sm:gap-1.5">
                 <div className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5">
-                  <GitHubIcon />
+                  <GitHubBrandIcon className="h-full w-full fill-current" />
                 </div>
                 <span className="whitespace-nowrap text-xs font-medium sm:text-sm">GitHub</span>
               </a>
               <div className="h-3 w-px bg-slate-300" />
               <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="flex items-center gap-1 transition hover:text-slate-900 sm:gap-1.5">
                 <div className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5">
-                  <LinkedInIcon />
+                  <LinkedInBrandIcon className="h-full w-full fill-current" />
                 </div>
                 <span className="whitespace-nowrap text-xs font-medium sm:text-sm">LinkedIn</span>
               </a>
               <div className="h-3 w-px bg-slate-300" />
-              <a href={siteConfig.resumeUrl} aria-label="Résumé" className="whitespace-nowrap text-xs font-medium transition hover:text-slate-900 sm:text-sm">Résumé</a>
+              <a href={`mailto:${siteConfig.email}`} aria-label="Email" className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-medium transition hover:text-slate-900 sm:text-sm">
+                <Mail size={14} />
+                <span>Email</span>
+              </a>
+              <div className="h-3 w-px bg-slate-300" />
+              <a href={siteConfig.resumeUrl} aria-label="Résumé" className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-medium transition hover:text-slate-900 sm:text-sm">
+                <Download size={14} />
+                <span>Résumé</span>
+              </a>
             </div>
           </div>
         </div>

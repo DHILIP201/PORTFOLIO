@@ -1,15 +1,16 @@
-import { ArrowRight, Download, GitBranch, Link2 } from 'lucide-react';
+import { ArrowRight, Download } from 'lucide-react';
 import { siteConfig } from '@/content/site';
 import { DeveloperAmbientLayer } from '@/components/developer-ambient';
+import { GitHubIcon, LinkedInIcon } from '@/components/brand-icons';
 import { ambientSections } from '@/content/ambient';
 
 export function Hero() {
   return (
-    <section className="container-shell relative pb-6 pt-10 md:pt-14 lg:pt-16">
+    <section className="relative pb-6 pt-10 md:pt-14 lg:pt-16">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.12),transparent_58%)]" aria-hidden="true" />
-      <DeveloperAmbientLayer items={ambientSections.hero} className="h-[420px]" floating />
+      <DeveloperAmbientLayer items={ambientSections.hero} />
 
-      <div className="relative z-10 grid gap-8 md:grid-cols-[1.35fr_0.85fr] md:items-end md:gap-10">
+      <div data-ambient-safe className="container-shell relative z-10 grid gap-8 md:grid-cols-[1.35fr_0.85fr] md:items-end md:gap-10">
         <div className="space-y-7">
           <p className="eyebrow">DHILIP T / ENGINEERING</p>
 
@@ -38,10 +39,12 @@ export function Hero() {
 
           <div className="flex items-center gap-5 pt-1 text-sm text-[color:var(--secondary-text)]">
             <a href={siteConfig.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition hover:text-[color:var(--primary-text)]">
-              <GitBranch size={16} /> GitHub
+              <GitHubIcon className="h-4 w-4 fill-current" />
+              <span>GitHub</span>
             </a>
             <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition hover:text-[color:var(--primary-text)]">
-              <Link2 size={16} /> LinkedIn
+              <LinkedInIcon className="h-4 w-4 fill-current" />
+              <span>LinkedIn</span>
             </a>
           </div>
         </div>

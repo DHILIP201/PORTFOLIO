@@ -6,7 +6,6 @@ import { ExperienceTimeline } from '@/components/experience-timeline';
 import { SkillsSection } from '@/components/skills-section';
 import { EducationSection } from '@/components/education-section';
 import { AchievementsSection } from '@/components/achievements-section';
-import { ResumeSection } from '@/components/resume-section';
 import { ContactSection } from '@/components/contact-section';
 import { Footer } from '@/components/footer';
 
@@ -21,7 +20,6 @@ export default function Home() {
       <SkillsSection />
       <EducationSection />
       <AchievementsSection />
-      <ResumeSection />
       <ContactSection />
       <Footer />
     </main>
